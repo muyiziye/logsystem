@@ -7,9 +7,9 @@
 #########################################################################
 
 # define some environment value
-BUILD_MODE=debug
+BUILD_MODE=release
 COMPILE_FLAGS=" -Wall -Werror "
-OUTPUT_PATH="./compile_output_${BUILD_MODE}"
+OUTPUT_PATH=`pwd`"/build/${BUILD_MODE}_output_compile"
 PRINT_CMD=False
 CLEAN_CACHE=False
 CMAKE_CMD="cmake"
@@ -57,7 +57,7 @@ while true; do
             ;;
         -o|--output)
             echo "Set output path: $2" ; 
-			OUTPUT_PATH="$2"
+            OUTPUT_PATH=`realpath $2`
             shift 2;
             continue
             ;;
@@ -102,18 +102,20 @@ done
 
 if [ ${CLEAN_CACHE} == True ];then
     echo "Clean all the cache"
-	rm -rf build output
+	rm -rf build
     exit 0 
 fi
 
+CMAKE_CMD="${CMAKE_CMD} -DOUTPUT_PATH=${OUTPUT_PATH}"
 
 if [ ${PRINT_CMD} == True ];then
-	echo "cd build; ${CMAKE_CMD} ${SRC_PATH}; make -j8"
+	echo "cd build; ${CMAKE_CMD} ${SRC_PATH}; make -j2"
 else
-	mkdir -pv build
-	pushd build;
+	mkdir -pv build/${BUILD_MODE}_cache
+    mkdir -pv ${OUTPUT_PATH}
+	pushd build/${BUILD_MODE}_cache;
 	${CMAKE_CMD} ${SRC_PATH};
-	make -j8 install;
+	make -j2 install;
 	popd
 fi
 	
