@@ -24,33 +24,44 @@
 
 #define LOG_TRACE(format, ...) \
     do{ \
-        LOG::SysLog::getInstance()->log_print(0, format, ##__VA_ARGS__); \
+        LOG::SysLog::getInstance()->logPrint(0, format, ##__VA_ARGS__); \
     } while(0);
 
 #define LOG_ERR(format, ...) \
     do{ \
         std::string format_str = std::string("[ERROR]") + FORMAT_STR(format) ; \
-        LOG::SysLog::getInstance()->log_print(1, format_str.c_str(), __VA_ARGS__); \
+        LOG::SysLog::getInstance()->logPrint(1, format_str.c_str(), ##__VA_ARGS__); \
     } while(0);
 
 #define LOG_WARN(format, ...) \
     do{ \
         std::string format_str = std::string("[WARN ]") + FORMAT_STR(format); \
-        LOG::SysLog::getInstance()->log_print(2, format_str.c_str(), __VA_ARGS__); \
+        LOG::SysLog::getInstance()->logPrint(2, format_str.c_str(), ##__VA_ARGS__); \
     } while(0);
 
 #define LOG_INFO(format, ...) \
     do{ \
         std::string format_str = std::string("[INFO ]") + FORMAT_STR(format); \
-        LOG::SysLog::getInstance()->log_print(3, format_str.c_str(), __VA_ARGS__); \
+        LOG::SysLog::getInstance()->logPrint(3, format_str.c_str(), ##__VA_ARGS__); \
     } while(0);
 
 #define LOG_DEBUG(format, ...) \
     do{ \
         std::string format_str = std::string("[DEBUG]") + FORMAT_STR(format); \
-        LOG::SysLog::getInstance()->log_print(4, format_str.c_str(), __VA_ARGS__); \
+        LOG::SysLog::getInstance()->logPrint(4, format_str.c_str(), ##__VA_ARGS__); \
     } while(0);
 
+#define LOG_ENTER() \
+    do{ \
+        std::string format_str = std::string("[DEBUG]") + FORMAT_STR("Enter...") + "%s\n"; \
+        LOG::SysLog::getInstance()->logPrint(3, format_str.c_str(), ""); \
+    } while(0);
+
+#define LOG_EXIT() \
+    do{ \
+        std::string format_str = std::string("[DEBUG]") + FORMAT_STR("Exit...") + "%s\n"; \
+        LOG::SysLog::getInstance()->logPrint(3, format_str.c_str(), ""); \
+    } while(0);
 
 namespace LOG{
 
@@ -59,16 +70,33 @@ public:
 	~SysLog();
 	static SysLog* getInstance();
 
-	void log_print(int loglevel, const char* format, ...);
+    inline void setLogLevel(int logLevel){
+        m_log_level = logLevel; 
+    }
+    inline int getLogLevel(){
+        return m_log_level;
+    }
+
+    inline void setOutputPath(const std::string &outputPath){
+        m_output_path = outputPath;
+    }
+    inline std::string getOutputPath(){
+        return m_output_path;
+    }
+
+	void logPrint(int loglevel, const char* format, ...);
 
 private:
 	SysLog();
+    std::string getOutputFileName();
 
     static SysLog* m_instance;
     static std::mutex m_mutex;
-    int m_logLevel;
+    int m_log_level;
     FILE *m_out_file;
-    std::mutex m_mutex_file;
+    std::mutex m_file_mutex;
+    std::mutex m_stdout_mutex;
+    std::string m_output_path;
 };
 
 } // namespace LOG

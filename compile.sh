@@ -41,7 +41,9 @@ eval set -- "$OPTS"
 while true; do
     case $1 in
         -d|--debug)
-			CMAKE_CMD="${CMAKE_CMD} -DDEBUG_MODE=ON "
+			CMAKE_CMD="${CMAKE_CMD} -DDEBUG_MODE=ON ";
+            BUILD_MODE=debug
+            OUTPUT_PATH=`pwd`"/build/${BUILD_MODE}_output_compile"
             shift;
             continue
             ;;

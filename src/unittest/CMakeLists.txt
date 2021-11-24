@@ -14,9 +14,9 @@ add_executable(${PROJECT_NAME} ${${PROJECT_NAME}_SRC})
 add_executable(${PROJECT_NAME}_static ${${PROJECT_NAME}_SRC})
 
 
-target_link_libraries(${PROJECT_NAME} logsystem)
+target_link_libraries(${PROJECT_NAME} logsystem pthread)
 
-target_link_libraries(${PROJECT_NAME}_static logsystem_static)
+target_link_libraries(${PROJECT_NAME}_static logsystem_static pthread)
 
 install(
     TARGETS ${PROJECT_NAME} ${PROJECT_NAME}_static
