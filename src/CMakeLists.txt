@@ -20,6 +20,10 @@ if(ENABLE_ASAN)
     set(CMAKE_CXX_FLAGS " ${CMAKE_CXX_FLAGS} -fsanitize=address ") 
 endif(ENABLE_ASAN)
 
+OPTION(ENABLE_GPROF "Enable gprof" OFF)
+if(ENABLE_GPROF)
+    set(CMAKE_CXX_FLAGS " ${CMAKE_CXX_FLAGS} -pg ") 
+endif(ENABLE_GPROF)
 
 OPTION(ENABLE_GCOV "Enable gcov" OFF)
 if(ENABLE_GCOV)

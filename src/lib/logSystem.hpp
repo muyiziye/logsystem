@@ -8,6 +8,7 @@
 
 #include <string>
 #include <iostream>
+#include <ctime>
 
 #define TRACE 0
 #define ERR 1
@@ -19,7 +20,7 @@
 #define FILE(x) strrchr(x, '/') ? strrchr(x, '/')+1 : x
 
 #define FORMAT_STR(format) \
-    "[" + std::string(__DATE__) + "-" + __TIME__ + "]" + "[" + std::to_string(pthread_self()) + "]" +\
+    "[" + LOG::SysLog::getInstance()->getCurrentTime() + "]" + "[" + std::to_string(pthread_self()) + "]" +\
     "[" + std::string(FILE(__FILE__)) + " " + __func__ + ":" + std::to_string(__LINE__) + "]" + format
 
 #define LOG_TRACE(format, ...) \
@@ -54,13 +55,13 @@
 #define LOG_ENTER() \
     do{ \
         std::string format_str = std::string("[DEBUG]") + FORMAT_STR("Enter...") + "%s\n"; \
-        LOG::SysLog::getInstance()->logPrint(3, format_str.c_str(), ""); \
+        LOG::SysLog::getInstance()->logPrint(4, format_str.c_str(), ""); \
     } while(0);
 
 #define LOG_EXIT() \
     do{ \
         std::string format_str = std::string("[DEBUG]") + FORMAT_STR("Exit...") + "%s\n"; \
-        LOG::SysLog::getInstance()->logPrint(3, format_str.c_str(), ""); \
+        LOG::SysLog::getInstance()->logPrint(4, format_str.c_str(), ""); \
     } while(0);
 
 namespace LOG{
@@ -69,6 +70,7 @@ class SysLog{
 public:
 	~SysLog();
 	static SysLog* getInstance();
+    static std::string getCurrentTime();
 
     inline void setLogLevel(int logLevel){
         m_log_level = logLevel; 
@@ -89,6 +91,7 @@ public:
 private:
 	SysLog();
     std::string getOutputFileName();
+    bool createOutputDir();
 
     static SysLog* m_instance;
     static std::mutex m_mutex;

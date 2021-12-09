@@ -23,6 +23,7 @@ Options:\n
 -d --debug\t\t\t\t Set debug mode, default is release.\n
 -g --gcov\t\t\t\t Compile with gcov's options. Alway used in debug mode.\n
 -a --asan\t\t\t\t Compile with asan's options. Alway used in debug mode.\n
+-r --gprof\t\t\t\t Compile with gpro's options. Alway used in debug mode.\n
 -c --clean\t\t\t\t Clean all the compile cache(include build and output).\n
 -p --print\t\t\t\t Just print the finally Make command.\n
 -o --output <value>\t\t\t set the build output path\n
@@ -31,7 +32,7 @@ Options:\n
 "
 
 ## handle parameters
-OPTS=`getopt -o dgao:pct::h -l debug,gcov,asan,output:,print,clean,unittest:: -- "$@"`
+OPTS=`getopt -o dgrao:pct::h -l debug,gcov,asan,gprof,output:,print,clean,unittest:: -- "$@"`
 if [ $? != 0 ]; then
     echo -ne $usage;
     exit 1
@@ -54,6 +55,11 @@ while true; do
             ;;
         -a|--asan)
 			CMAKE_CMD="${CMAKE_CMD} -DENABLE_ASAN=ON "
+            shift;
+            continue
+            ;;
+        -r|--gprof)
+			CMAKE_CMD="${CMAKE_CMD} -DENABLE_GPROF=ON "
             shift;
             continue
             ;;
